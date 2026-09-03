@@ -17,6 +17,7 @@ int main()
     Order o1{
         1,
         Side::BUY,
+        OrderType::LIMIT,
         100,
         50
     };
@@ -24,6 +25,7 @@ int main()
     Order o2{
         2,
         Side::BUY,
+        OrderType::LIMIT,
         100,
         100
     };
@@ -31,6 +33,7 @@ int main()
     Order o3{
         17,
         Side::BUY,
+        OrderType::LIMIT,
         99,
         200
     };
@@ -38,7 +41,7 @@ int main()
     orderbook.add_order(o1);
     orderbook.add_order(o2);
     orderbook.add_order(o3);
-    orderbook.print_book(orderbook);
+    orderbook.print_book();
     // -------------------------
     // Add SELL orders
     // -------------------------
@@ -46,6 +49,7 @@ int main()
     Order o4{
         24,
         Side::SELL,
+        OrderType::LIMIT,
         101,
         75
     };
@@ -53,6 +57,7 @@ int main()
     Order o5{
         12,
         Side::SELL,
+        OrderType::LIMIT,
         101,
         50
     };
@@ -60,6 +65,7 @@ int main()
     Order o6{
         36,
         Side::SELL,
+        OrderType::LIMIT,
         102,
         100
     };
@@ -69,7 +75,7 @@ int main()
     orderbook.add_order(o6);
 
     cout << "INITIAL ORDERS ADDED\n";
-        orderbook.print_book(orderbook);
+        orderbook.print_book();
 
     // -------------------------
     // Incoming SELL
@@ -78,6 +84,7 @@ int main()
     Order o7{
         7,
         Side::SELL,
+        OrderType::LIMIT,
         100,
         120
     };
@@ -87,7 +94,7 @@ int main()
     orderbook.add_order(o7);
 
     cout << "O7 PROCESSED\n";
-        orderbook.print_book(orderbook);
+        orderbook.print_book();
 
     cout<<"testing order cancellations"<<endl;
     auto cancelled =orderbook.cancel_order(17);
@@ -97,7 +104,9 @@ int main()
     else{
       cout<<"order not cancelled"<<endl;
     }
-        orderbook.print_book(orderbook);
-
+        orderbook.print_book();
+    cout<<"modifying order\n";
+    orderbook.modify_order(2,60);
+    orderbook.print_book();
     return 0;
 }
