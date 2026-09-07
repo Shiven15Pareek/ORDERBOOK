@@ -35,5 +35,8 @@ class OrderBook{
   void print_trades()const;
   void modify_order(OrderId id,Quantity new_quantity);
   void modify_order(OrderId,Quantity new_quantity,Price new_price);
+  void print_bid_depth()const;
+  void print_ask_depth() const;
+  double calculate_imbalance() const;
 };
 

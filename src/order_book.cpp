@@ -197,9 +197,70 @@ void OrderBook::modify_order(OrderId id,Quantity new_quantity){
   iter->quantity=new_quantity;
 }
 
-void OrderBook::modify_order(OrderId id,Quantity new_quantity,Price new_price){
+void OrderBook::modify_order(OrderId id,Price new_price,Quantity new_quantity){
   if(order_lookup.find(id)==order_lookup.end()){
     return;
   }
-  
+  auto &order_location=order_lookup[id];
+  auto iter=order_location.iterator;
+  if(new_quantity==0){
+    cancel_order(id);
+    return;
+  }
+  if(new_price==iter->price){
+    modify_order(id,new_quantity);
+    return ;
+  }
+  Order new_order={
+    iter->id,
+    iter->side,
+    iter->type,
+    new_price,
+    new_quantity
+  };
+  cancel_order(iter->id);
+  add_order(new_order);
+}
+
+void OrderBook::print_bid_depth() const{
+  cout<<"===============================BID DEPTH====================="<<endl;
+  cout<<"   PRICE         QUANTITY\n";
+  for(const auto &levels: bids){
+    Quantity total_quantity=0;
+    for(const auto &orders:levels.second){
+       total_quantity+=orders.quantity;
+    }
+  cout<<"  "<<levels.first<<"        "<<total_quantity<<"\n";
+  }
+}
+
+void OrderBook::print_ask_depth() const{
+  cout<<"===============================ASK DEPTH====================="<<endl;
+  cout<<"   PRICE         QUANTITY\n";
+  for(const auto &levels:asks){
+    Quantity total_quantity=0;
+    for(const auto &orders: levels.second){
+      total_quantity+=orders.quantity;
+    }
+  cout<<"  "<<levels.first<<"        "<<total_quantity<<"\n";
+  }
+}
+
+double OrderBook:: calculate_imbalance() const{
+  if(bids.empty() || asks.empty()){
+    return 0.0;
+  }
+  const auto &level_bid=*bids.begin();
+  Quantity total_bid=0;
+  for(const auto &order:level_bid.second){
+    total_bid+=order.quantity;
+  }
+  const auto &level_ask=*asks.begin();
+  Quantity total_ask=0;
+  for(const auto &order:level_ask.second){
+    total_ask+=order.quantity;
+  }
+  double q_bid=static_cast<double>(total_bid);
+  double q_ask=static_cast<double>(total_ask);
+  return (q_bid-q_ask)/(q_bid+q_ask);
 }
