@@ -39,5 +39,6 @@ class OrderBook{
   void print_ask_depth() const;
   double calculate_imbalance() const;
   double calculate_imbalance(int n) const;
+  double calculate_weighted_imbalance(int n,double lambda) const;
 };
 

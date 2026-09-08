@@ -294,3 +294,45 @@ double OrderBook:: calculate_imbalance(int n) const{
   }
   return ( static_cast<double>(total_bid)-static_cast<double>(total_ask))/(static_cast<double>(total_bid)+static_cast<double>(total_ask));
 }
+
+double OrderBook:: calculate_weighted_imbalance(int n,double lambda) const{
+  if(bids.empty() || asks.empty()){
+    return 0.0;
+  }
+  if(n<=0){
+    return 0.0;
+  }
+  if(lambda<0){
+    return 0.0;
+  }
+  double total_bid=0,total_ask=0;
+  auto bid_levels=static_cast<int>(bids.size());
+  int bid_level=min(n,bid_levels);
+  auto it_bid=bids.begin();
+  int i=1;
+  while(bid_level--){
+    double weight=exp(-lambda*(i-1));
+    for(const auto &order:it_bid->second){
+      total_bid=total_bid+weight*static_cast<double>(order.quantity);
+    }
+    it_bid++;
+    i++;
+  }
+
+  auto ask_levels=static_cast<int>(asks.size());
+  int ask_level=min(n,ask_levels);
+  auto it_ask=asks.begin();
+  i=1;
+  while(ask_level--){
+    double weight=exp(-lambda*(i-1));
+    for(const auto &order:it_ask->second){
+      total_ask=total_ask+weight*static_cast<double>(order.quantity);
+    }
+    it_ask++;
+    i++;
+  }
+  if(total_ask+total_bid==0){
+    return 0.0;
+  }
+  return ((total_bid)-(total_ask))/((total_bid)+(total_ask));
+}
