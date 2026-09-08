@@ -3,6 +3,7 @@
 #include<cstdint>
 #include<iomanip>
 #include<stdbool.h>
+#include<cmath>
 using namespace std;
 void OrderBook::add_order(Order order){
   if(order.side==Side::BUY){
@@ -230,7 +231,7 @@ void OrderBook::print_bid_depth() const{
     for(const auto &orders:levels.second){
        total_quantity+=orders.quantity;
     }
-  cout<<"  "<<levels.first<<"        "<<total_quantity<<"\n";
+  cout<<"    "<<levels.first<<"             "<<total_quantity<<"\n";
   }
 }
 
@@ -242,7 +243,7 @@ void OrderBook::print_ask_depth() const{
     for(const auto &orders: levels.second){
       total_quantity+=orders.quantity;
     }
-  cout<<"  "<<levels.first<<"        "<<total_quantity<<"\n";
+  cout<<"    "<<levels.first<<"             "<<total_quantity<<"\n";
   }
 }
 
@@ -263,4 +264,33 @@ double OrderBook:: calculate_imbalance() const{
   double q_bid=static_cast<double>(total_bid);
   double q_ask=static_cast<double>(total_ask);
   return (q_bid-q_ask)/(q_bid+q_ask);
+}
+
+double OrderBook:: calculate_imbalance(int n) const{
+  if(bids.empty() || asks.empty()){
+    return 0.0;
+  }
+  if(n<=0){
+    return 0.0;
+  }
+  Quantity total_bid=0,total_ask=0;
+  auto bid_levels=static_cast<int>(bids.size());
+  int bid_level=min(n,bid_levels);
+  auto it_bid=bids.begin();
+  while(bid_level--){
+    for(const auto &order:it_bid->second){
+      total_bid+=order.quantity;
+    }
+    it_bid++;
+  }
+  auto ask_levels=static_cast<int>(asks.size());
+  int ask_level=min(n,ask_levels);
+  auto it_ask=asks.begin();
+  while(ask_level--){
+    for(const auto &order:it_ask->second){
+      total_ask+=order.quantity;
+    }
+    it_ask++;
+  }
+  return ( static_cast<double>(total_bid)-static_cast<double>(total_ask))/(static_cast<double>(total_bid)+static_cast<double>(total_ask));
 }

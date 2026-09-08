@@ -38,5 +38,6 @@ class OrderBook{
   void print_bid_depth()const;
   void print_ask_depth() const;
   double calculate_imbalance() const;
+  double calculate_imbalance(int n) const;
 };
 

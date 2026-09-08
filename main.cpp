@@ -108,5 +108,13 @@ int main()
     cout<<"modifying order\n";
     orderbook.modify_order(2,60);
     orderbook.print_book();
+    cout<<"bid depth: ";
+    orderbook.print_bid_depth();
+    cout<<endl;
+    double imbalance=orderbook.calculate_imbalance();
+    cout<<"imbalance: "<<imbalance<<"\n";
+    double imbalance_n=orderbook.calculate_imbalance(2);
+    cout<<"imbalance uptill level 2: "<<imbalance_n<<"\n";
     return 0;
 }
+
